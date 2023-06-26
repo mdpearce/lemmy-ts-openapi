@@ -12,31 +12,36 @@ export function handleProperty(name: string, type: Type, schema: Schema, isOptio
                 type: "array",
                 items: {
                     $ref: `#/components/schemas/${type.getArrayElementType()?.getSymbol()?.getName()}`
-                }
+                },
+                nullable: isOptional,
             }
         } else {
             schema.properties[name] = {
                 type: "array",
                 items: {
                     type: mapTsTypeToJsonSchemaType(type.getArrayElementType()?.getText() ?? "")
-                }
+                },
+                nullable: isOptional,
             }
         }
     } else if (type.isUnion()) {
         if (type.getUnionTypes().find(t => t.getText() === "File")) { // This is gross
             schema.properties[name] = {
                 type: "string",
-                format: "byte"
+                format: "byte",
+                nullable: isOptional,
             };
         }
     } else {
         if (isReferenceType(type, typeRegistry)) {
             schema.properties[name] = {
-                $ref: `#/components/schemas/${type.getSymbol()?.getName()}`
+                $ref: `#/components/schemas/${type.getSymbol()?.getName()}`,
+                nullable: isOptional,
             };
         } else {
             schema.properties[name] = {
-                type: mapTsTypeToJsonSchemaType(type.getText())
+                type: mapTsTypeToJsonSchemaType(type.getText()),
+                nullable: isOptional,
             }
         }
     }

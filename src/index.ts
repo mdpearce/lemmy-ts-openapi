@@ -108,7 +108,10 @@ function processEndpoints(sourceFile: SourceFile): { [path: string]: any } {
 
         // Extract the return type
         const body = method.getBodyText()?.replace('\n', '').replace('\n', '')
-        const returnType: string = body?.match(/return\s+this\.#wrapper<\s*(\w+),\s*(\w+)\s*>/)?.at(1) || "UNDEFINED"
+        const returnType = body?.match(/return\s+this\.#wrapper<\s*(\w+),\s*(\w+)\s*>/)?.at(2)
+        if (returnType === undefined) {
+            throw new Error("Could not determine return type")
+        }
 
         // Create a path item for this method
         paths[path] = {
