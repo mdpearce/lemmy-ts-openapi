@@ -1,7 +1,7 @@
 import {Type} from "ts-morph";
-import {Schema} from "./schema";
-import {isReferenceType} from "./isReferenceType";
-import {mapTsTypeToJsonSchemaType} from "./mapTsTypeToJsonSchemaType";
+import {Schema} from "../models/schema";
+import {isReferenceType} from "../utils/isReferenceType";
+import {mapTsTypeToJsonSchemaType} from "../utils/mapTsTypeToJsonSchemaType";
 
 export function handleProperty(name: string, type: Type, schema: Schema, isOptional: boolean, typeRegistry: {
     [name: string]: boolean

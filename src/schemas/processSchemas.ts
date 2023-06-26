@@ -1,7 +1,7 @@
 import {SourceFile} from "ts-morph";
-import {OpenApiSchema} from "./openApiSchema";
-import {Schema} from "./schema";
-import {handleProperty} from "./handleProperty";
+import {OpenApiSchema} from "../models/openApiSchema";
+import {Schema} from "../models/schema";
+import {handleProperty} from "../properties/handleProperty";
 
 export function processSchemas(sourceFiles: SourceFile[], typeRegistry: {
     [name: string]: boolean

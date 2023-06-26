@@ -1,11 +1,11 @@
 import {Project,} from "ts-morph";
 import * as fs from "fs";
-import {OpenApiSchema} from "./openApiSchema";
-import {registerTypes} from "./registerTypes";
-import {processSchemas} from "./processSchemas";
+import {OpenApiSchema} from "./models/openApiSchema";
+import {registerTypes} from "./models/registerTypes";
+import {processSchemas} from "./schemas/processSchemas";
 import yargs from "yargs";
 import {hideBin} from "yargs/helpers";
-import {processPaths} from "./processPaths";
+import {processPaths} from "./paths/processPaths";
 
 interface CommandLineOptions {
     clientDir: string,

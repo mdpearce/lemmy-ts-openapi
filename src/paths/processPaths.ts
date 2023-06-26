@@ -1,5 +1,5 @@
 import {SourceFile} from "ts-morph";
-import {PathSchema} from "./pathSchema";
+import {PathSchema} from "../models/pathSchema";
 
 export function processPaths(sourceFile: SourceFile): { [path: string]: any } {
     const httpTypeRegex = /`HTTP\.(\w+) (.*)`/;  // regex to extract HTTP method and path from JSDoc comment
