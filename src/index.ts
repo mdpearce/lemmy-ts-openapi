@@ -1,10 +1,11 @@
-import {Project, SourceFile,} from "ts-morph";
+import {Project,} from "ts-morph";
 import * as fs from "fs";
 import {OpenApiSchema} from "./openApiSchema";
 import {registerTypes} from "./registerTypes";
 import {processSchemas} from "./processSchemas";
-import yargs, {option} from "yargs";
+import yargs from "yargs";
 import {hideBin} from "yargs/helpers";
+import {processPaths} from "./processPaths";
 
 interface CommandLineOptions {
     clientDir: string,
@@ -59,91 +60,8 @@ const typeRegistry: {
 
 registerTypes(typesProject.getSourceFiles(), typeRegistry)
 
-type Schema = {
-    $ref: string;
-};
+const paths = processPaths(httpProject.getSourceFileOrThrow("http.ts"));
 
-function processEndpoints(sourceFile: SourceFile): { [path: string]: any } {
-    const httpTypeRegex = /`HTTP\.(\w+) (.*)`/;  // regex to extract HTTP method and path from JSDoc comment
-
-// Function to create a reference to a schema
-    function createSchemaRef(name: string): Schema {
-        return {
-            $ref: `#/components/schemas/${name}`
-        };
-    }
-
-// Create an OpenAPI paths object
-    const paths: { [path: string]: any } = {};
-
-// Find the LemmyHttp class
-    const lemmyHttpClass = sourceFile.getClassOrThrow("LemmyHttp");
-
-// Iterate over the methods of the class
-    for (const method of lemmyHttpClass.getMethods()) {
-        // Extract the name of the method
-        const operationId = method.getName();
-        if (operationId === "deleteAccount") {
-            console.log("foo")
-        }
-
-        // Extract the JSDoc comment
-        const comment = method.getJsDocs()[0]?.getDescription();
-        const summary = comment?.trim()?.slice(0, comment?.trim().indexOf("\n\n"))
-
-        // Extract the HTTP method and path from the JSDoc comment
-        const httpInfoMatch = comment?.match(httpTypeRegex);
-        if (!httpInfoMatch) {
-            console.warn(`Could not extract HTTP info from comment: ${comment} in method: ${operationId}`);
-            continue;
-        }
-
-        const httpMethod = httpInfoMatch[1].toLowerCase();
-        const path = httpInfoMatch[2];
-
-        // Extract the parameter type
-
-        const param = method.getParameters()[0];
-        const paramType = param.getType().getSymbol()?.getName() || "UNDEFINED";
-
-        // Extract the return type
-        const body = method.getBodyText()?.replace('\n', '').replace('\n', '')
-        const returnType = body?.match(/return\s+this\.#wrapper<\s*(\w+),\s*(\w+)\s*>/)?.at(2)
-        if (returnType === undefined) {
-            throw new Error("Could not determine return type")
-        }
-
-        // Create a path item for this method
-        paths[path] = {
-            [httpMethod]: {
-                operationId,
-                requestBody: {
-                    content: {
-                        'application/json': {
-                            schema: createSchemaRef(paramType),
-                        },
-                    },
-                },
-                responses: {
-                    '200': {
-                        description: 'OK',
-                        content: {
-                            'application/json': {
-                                schema: createSchemaRef(returnType),
-                            },
-                        },
-                    },
-                },
-                summary: summary,
-            },
-        };
-    }
-
-    return paths
-}
-
-
-const paths = processEndpoints(httpProject.getSourceFileOrThrow("http.ts"));
 openAPISchema.paths = paths;
 
 processSchemas(typesProject.getSourceFiles(), typeRegistry, openAPISchema)
