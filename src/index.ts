@@ -83,9 +83,13 @@ function processEndpoints(sourceFile: SourceFile): { [path: string]: any } {
     for (const method of lemmyHttpClass.getMethods()) {
         // Extract the name of the method
         const operationId = method.getName();
+        if (operationId === "deleteAccount") {
+            console.log("foo")
+        }
 
         // Extract the JSDoc comment
         const comment = method.getJsDocs()[0]?.getDescription();
+        const summary = comment?.trim()?.slice(0, comment?.trim().indexOf("\n\n"))
 
         // Extract the HTTP method and path from the JSDoc comment
         const httpInfoMatch = comment?.match(httpTypeRegex);
@@ -98,11 +102,13 @@ function processEndpoints(sourceFile: SourceFile): { [path: string]: any } {
         const path = httpInfoMatch[2];
 
         // Extract the parameter type
+
         const param = method.getParameters()[0];
         const paramType = param.getType().getSymbol()?.getName() || "UNDEFINED";
 
         // Extract the return type
-        const returnType: string = method.getReturnType().getText().match(/Promise<import\((.+)\)\.(.+)>/)?.at(2) || "UNDEFINED"// Assumes the return type is always a Promise
+        const body = method.getBodyText()?.replace('\n', '').replace('\n', '')
+        const returnType: string = body?.match(/return\s+this\.#wrapper<\s*(\w+),\s*(\w+)\s*>/)?.at(1) || "UNDEFINED"
 
         // Create a path item for this method
         paths[path] = {
@@ -125,6 +131,7 @@ function processEndpoints(sourceFile: SourceFile): { [path: string]: any } {
                         },
                     },
                 },
+                summary: summary,
             },
         };
     }
