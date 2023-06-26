@@ -90,7 +90,7 @@ function processEndpoints(sourceFile: SourceFile): { [path: string]: any } {
         // Extract the HTTP method and path from the JSDoc comment
         const httpInfoMatch = comment?.match(httpTypeRegex);
         if (!httpInfoMatch) {
-            console.warn(`Could not extract HTTP info from comment: ${comment}`);
+            console.warn(`Could not extract HTTP info from comment: ${comment} in method: ${operationId}`);
             continue;
         }
 
@@ -99,11 +99,10 @@ function processEndpoints(sourceFile: SourceFile): { [path: string]: any } {
 
         // Extract the parameter type
         const param = method.getParameters()[0];
-        const paramType = param?.getType()?.getText();
+        const paramType = param.getType().getSymbol()?.getName() || "UNDEFINED";
 
         // Extract the return type
-        const returnType = "";
-        // const returnType = method.getReturnType().getText().match(/Promise<(.+)>/)[1];  // Assumes the return type is always a Promise
+        const returnType: string = method.getReturnType().getText().match(/Promise<import\((.+)\)\.(.+)>/)?.at(2) || "UNDEFINED"// Assumes the return type is always a Promise
 
         // Create a path item for this method
         paths[path] = {
@@ -132,7 +131,6 @@ function processEndpoints(sourceFile: SourceFile): { [path: string]: any } {
 
     return paths
 }
-
 
 
 const paths = processEndpoints(httpProject.getSourceFileOrThrow("http.ts"));
