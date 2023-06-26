@@ -52,6 +52,7 @@ export function processPaths(sourceFile: SourceFile): { [path: string]: any } {
             [httpMethod]: {
                 operationId,
                 requestBody: {
+                    required: true,
                     content: {
                         'application/json': {
                             schema: createSchemaRef(paramType),
