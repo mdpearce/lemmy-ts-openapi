@@ -31,6 +31,11 @@ export function handleProperty(name: string, type: Type, schema: Schema, isOptio
                 format: "byte",
                 nullable: isOptional,
             };
+        } else if (type.getText() === "boolean") { // Why boolean types are Union types escapes me...
+            schema.properties[name] = {
+                type: "boolean",
+                nullable: isOptional,
+            }
         }
     } else {
         if (isReferenceType(type, typeRegistry)) {
