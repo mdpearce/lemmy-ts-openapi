@@ -36,6 +36,10 @@ export function handleProperty(name: string, type: Type, schema: Schema, isOptio
                 type: "boolean",
                 nullable: isOptional,
             }
+        } else if (isReferenceType(type, typeRegistry)) {
+            schema.properties[name] = {
+                $ref: `#/components/schemas/${type.getSymbol()?.getName() ?? type.getAliasSymbol()?.getName()}`
+            }
         }
     } else {
         if (isReferenceType(type, typeRegistry)) {

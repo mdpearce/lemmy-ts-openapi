@@ -5,7 +5,7 @@ export function isReferenceType(type: Type, registry: { [name: string]: boolean 
     if (type.isArray()) {
         wrappedTypeName = type.getArrayElementType()?.getSymbol()?.getName()
     } else {
-        wrappedTypeName = type.getSymbol()?.getName()
+        wrappedTypeName = type.getSymbol()?.getName() ?? type.getAliasSymbol()?.getName()
     }
     return registry.hasOwnProperty(wrappedTypeName || "")
 }
