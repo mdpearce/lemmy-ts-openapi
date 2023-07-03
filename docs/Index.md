@@ -11,3 +11,6 @@ This allows us to use the openapi-generators to create a Lemmy client SDK in alm
 3. clone the lemmy js sdk somewhere on disk
 4. execute `npm start -- -c /path/to/js-client -o openapi-lemmy.json`
 5. run your desired openapi-generator to generate a complete client SDK in your desired language
+
+## Contributions
+Contributions are welcome!
