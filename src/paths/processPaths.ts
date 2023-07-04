@@ -1,4 +1,4 @@
-import {SourceFile} from "ts-morph";
+import {SourceFile, Type} from "ts-morph";
 import {PathSchema} from "../models/pathSchema";
 import {mapTsTypeToJsonSchemaType} from "../utils/mapTsTypeToJsonSchemaType";
 import {isReferenceType} from "../utils/isReferenceType";
@@ -17,6 +17,15 @@ export function processPaths(sourceFile: SourceFile, typeRegistry: {
     function createSchemaPrimitive(typeName: string): PathSchema {
         return {
             type: mapTsTypeToJsonSchemaType(typeName)
+        }
+    }
+
+    function createSchemaArray(typeName: string): PathSchema {
+        return {
+            type: "array",
+            items: {
+                type: typeName.replace("[]", "")
+            }
         }
     }
 
@@ -61,10 +70,13 @@ export function processPaths(sourceFile: SourceFile, typeRegistry: {
             const isOptional = declaredProp.getSymbolOrThrow().isOptional()
             const name = declaredProp.getSymbolOrThrow().getName()
             const typeName = declaredProp.getType().getText()
+            const isArray = declaredProp.getType().isArray()
 
             let schemaType: PathSchema
-            if (isReferenceType(declaredProp.getType(), typeRegistry)) {
-                schemaType = createSchemaRef(typeName)
+            if (isArray) {
+                schemaType = createSchemaArray(typeName)
+            } else if (isReferenceType(declaredProp.getType(), typeRegistry)) {
+                schemaType = createSchemaRef(declaredProp.getType().getAliasSymbolOrThrow().getName())
             } else {
                 schemaType = createSchemaPrimitive(typeName)
             }
