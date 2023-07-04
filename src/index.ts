@@ -60,7 +60,7 @@ const typeRegistry: {
 
 registerTypes(typesProject.getSourceFiles(), typeRegistry)
 
-const paths = processPaths(httpProject.getSourceFileOrThrow("http.ts"));
+const paths = processPaths(httpProject.getSourceFileOrThrow("http.ts"), typeRegistry);
 
 openAPISchema.paths = paths;
 
