@@ -51,6 +51,13 @@ const openAPISchema: OpenApiSchema = {
     paths: {},
     components: {
         schemas: {},
+        securitySchemes: {
+            AuthKey: {
+                type: "apiKey",
+                in: "query",
+                name: "auth"
+            }
+        }
     },
 };
 

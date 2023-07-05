@@ -64,6 +64,7 @@ export function processPaths(sourceFile: SourceFile, typeRegistry: {
         }
 
         param.getChildren()[2].getType().getProperties()[0].getDeclarations()[0]
+        let isAuthenticated = false
 
         const pathParams = param.getTypeNodeOrThrow().getType().getProperties().map(prop => {
             const declaredProp = prop.getDeclarations()[0]
@@ -73,6 +74,10 @@ export function processPaths(sourceFile: SourceFile, typeRegistry: {
             const isArray = declaredProp.getType().isArray()
 
             let schemaType: PathSchema
+            if (name === "auth") {
+                isAuthenticated = true;
+                return null;
+            }
             if (isArray) {
                 schemaType = createSchemaArray(typeName)
             } else if (isReferenceType(declaredProp.getType(), typeRegistry)) {
@@ -87,12 +92,24 @@ export function processPaths(sourceFile: SourceFile, typeRegistry: {
                 required: !isOptional,
                 schema: schemaType
             }
+        }).filter(params => {
+            return params != null
         })
+
+        let security
+        if (isAuthenticated) {
+            security = {
+                AuthKey: []
+            }
+        } else security = {}
 
         // Create a path item for this method
         paths[path] = {
             [httpMethod]: {
                 operationId,
+                security: [
+                    security
+                ],
                 parameters: pathParams,
                 responses: {
                     '200': {
