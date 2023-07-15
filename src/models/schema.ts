@@ -5,5 +5,5 @@ export interface Schema {
     enum?: string[];
     required?: string[];
     type: string;
-    properties?: SchemaProperties;
+    properties: SchemaProperties;
 }

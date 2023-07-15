@@ -17,6 +17,7 @@ export function processSchemas(sourceFiles: SourceFile[], typeRegistry: {
 
             const schema: Schema = {
                 type: "object",
+                properties: {}
             }
 
             const type = typeAlias.getType()
@@ -28,7 +29,7 @@ export function processSchemas(sourceFiles: SourceFile[], typeRegistry: {
             } else if (type.isUnion()) {
                 schema.type = "object";
                 schema.oneOf = type.getUnionTypes().map(t => {
-                    const subSchema: Schema = {type: "object"};
+                    const subSchema: Schema = {type: "object", properties: {}};
                     t.getProperties().forEach(prop => {
                         const declaredType = prop.getDeclarations()[0].getType()
                         handleProperty(prop.getName(), declaredType, subSchema, prop.isOptional(), typeRegistry)
@@ -46,6 +47,7 @@ export function processSchemas(sourceFiles: SourceFile[], typeRegistry: {
             }
             const schema: Schema = {
                 type: "object",
+                properties: {},
             };
             for (const prop of iFace.getProperties()) {
                 handleProperty(prop.getName(), prop.getType(), schema, prop.hasQuestionToken(), typeRegistry)
