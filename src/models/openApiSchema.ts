@@ -5,6 +5,7 @@ export interface OpenApiSchema {
     info: {
         version: string;
         title: string;
+        description: string;
     };
     paths: any;
     components: {

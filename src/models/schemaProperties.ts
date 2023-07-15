@@ -3,6 +3,9 @@ export interface SchemaProperties {
         format?: string;
         type?: string;
         nullable?: boolean;
+        allOf?: [
+            { $ref?: string; }
+        ]
         array?: string;
         items?: {
             $ref?: string;
