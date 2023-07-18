@@ -56,10 +56,7 @@ export function handleProperty(name: string, type: Type, schema: Schema, isOptio
         }
     }
 
-    if (!isOptional) {
-        if (schema.required === undefined) {
-            schema.required = [];
-        }
+    if (schema.required !== undefined) {
         schema.required.push(name);
     }
 }
