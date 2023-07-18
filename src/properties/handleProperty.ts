@@ -40,6 +40,13 @@ export function handleProperty(name: string, type: Type, schema: Schema, isOptio
                 $ref: `#/components/schemas/${type.getSymbol()?.getName() ?? type.getAliasSymbol()?.getName()}`
             }
         }
+    } else if (type.isLiteral()) {
+        schema.properties[name] = {
+            type: "string",
+            enum: [
+                type.getText()
+            ],
+        }
     } else {
         if (isReferenceType(type, typeRegistry)) {
             schema.properties[name] = {
