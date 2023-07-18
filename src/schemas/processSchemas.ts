@@ -17,7 +17,6 @@ export function processSchemas(sourceFiles: SourceFile[], typeRegistry: {
 
             const schema: Schema = {
                 type: "object",
-                required: [],
                 properties: {}
             }
 
