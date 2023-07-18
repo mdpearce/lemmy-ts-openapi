@@ -12,8 +12,7 @@ export function handleProperty(name: string, type: Type, schema: Schema, isOptio
                 type: "array",
                 items: {
                     $ref: `#/components/schemas/${type.getArrayElementType()?.getSymbol()?.getName()}`
-                },
-                nullable: isOptional,
+                }
             }
         } else {
             schema.properties[name] = {

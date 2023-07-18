@@ -12,12 +12,5 @@ export interface OpenApiSchema {
         schemas: {
             [name: string]: Schema;
         };
-        securitySchemes: {
-            [name: string]: {
-                type: string,
-                in: string,
-                name: string
-            }
-        }
     };
 }
