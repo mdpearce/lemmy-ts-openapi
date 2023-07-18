@@ -75,13 +75,6 @@ export function processPaths(sourceFile: SourceFile, typeRegistry: {
             const isArray = declaredProp.getType().isArray()
 
             let schemaType: PathSchema
-            if (name === "auth") {
-                isAuthenticated = true;
-                if (isOptional) {
-                    optionalAuthentication = true
-                }
-                return null;
-            }
             if (isArray) {
                 schemaType = createSchemaArray(typeName)
             } else if (isReferenceType(declaredProp.getType(), typeRegistry)) {
@@ -100,38 +93,51 @@ export function processPaths(sourceFile: SourceFile, typeRegistry: {
             return params != null
         })
 
-        let security
-        if (isAuthenticated && optionalAuthentication) {
-            security = [{
-                AuthKey: []
-            },{}]
-        } else if (isAuthenticated) {
-            security = [{
-                AuthKey: []
-            }]
-        } else {
-            security = [{}]
-        }
-
-        // Create a path item for this method
-        paths[path] = {
-            [httpMethod]: {
-                operationId,
-                security: security,
-                parameters: pathParams,
-                responses: {
-                    '200': {
-                        description: 'OK',
+        if (httpMethod === "post" || httpMethod === "put") {
+            paths[path] = {
+                [httpMethod]: {
+                    operationId,
+                    requestBody: {
                         content: {
-                            'application/json': {
-                                schema: createSchemaRef(returnType),
+                            "application/json": {
+                                schema: createSchemaRef(paramType)
+                            }
+                        }
+                    },
+                    responses: {
+                        '200': {
+                            description: 'OK',
+                            content: {
+                                'application/json': {
+                                    schema: createSchemaRef(returnType),
+                                },
                             },
                         },
                     },
+                    summary: summary,
                 },
-                summary: summary,
-            },
-        };
+            };
+        } else {
+
+            // Create a path item for this method
+            paths[path] = {
+                [httpMethod]: {
+                    operationId,
+                    parameters: pathParams,
+                    responses: {
+                        '200': {
+                            description: 'OK',
+                            content: {
+                                'application/json': {
+                                    schema: createSchemaRef(returnType),
+                                },
+                            },
+                        },
+                    },
+                    summary: summary,
+                },
+            };
+        }
     }
 
     return paths
