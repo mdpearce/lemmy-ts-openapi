@@ -43,7 +43,10 @@ export function handleProperty(name: string, type: Type, schema: Schema, isOptio
     } else {
         if (isReferenceType(type, typeRegistry)) {
             schema.properties[name] = {
-                $ref: `#/components/schemas/${type.getSymbol()?.getName()}`
+                nullable: isOptional,
+                allOf: [
+                    {$ref : `#/components/schemas/${type.getSymbol()?.getName()}`}
+                ],
             };
         } else {
             schema.properties[name] = {
@@ -53,7 +56,7 @@ export function handleProperty(name: string, type: Type, schema: Schema, isOptio
         }
     }
 
-    if (!isOptional) {
-        schema.required?.push(name);
+    if (schema.required !== undefined) {
+        schema.required.push(name);
     }
 }

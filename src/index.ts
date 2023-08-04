@@ -47,6 +47,7 @@ const openAPISchema: OpenApiSchema = {
     info: {
         version: "1.0.0",
         title: "Lemmy REST API",
+        description: "Lemmy REST API (v3) OpenAPI 3.0.0 generated specification.",
     },
     paths: {},
     components: {
