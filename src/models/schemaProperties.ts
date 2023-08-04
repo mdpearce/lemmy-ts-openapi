@@ -12,5 +12,6 @@ export interface SchemaProperties {
             type?: string;
         }
         $ref?: string;
+        enum?: string[];
     };
 }
