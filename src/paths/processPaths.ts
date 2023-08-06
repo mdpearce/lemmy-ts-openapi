@@ -150,13 +150,7 @@ export function processPaths(sourceFile: SourceFile, typeRegistry: {
                 // If it exists just add the new http method
                 paths[path][httpMethod] = {
                     operationId,
-                    requestBody: {
-                        content: {
-                            "application/json": {
-                                schema: createSchemaRef(paramType)
-                            }
-                        }
-                    },
+                    parameters: pathParams,
                     responses: {
                         '200': {
                             description: 'OK',
@@ -174,13 +168,7 @@ export function processPaths(sourceFile: SourceFile, typeRegistry: {
                 paths[path] = {
                     [httpMethod]: {
                         operationId,
-                        requestBody: {
-                            content: {
-                                "application/json": {
-                                    schema: createSchemaRef(paramType)
-                                }
-                            }
-                        },
+                        parameters: pathParams,
                         responses: {
                             '200': {
                                 description: 'OK',
