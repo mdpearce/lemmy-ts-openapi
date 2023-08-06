@@ -94,8 +94,10 @@ export function processPaths(sourceFile: SourceFile, typeRegistry: {
         })
 
         if (httpMethod === "post" || httpMethod === "put") {
-            paths[path] = {
-                [httpMethod]: {
+            // Check if paths[path] already exists
+            if (paths.hasOwnProperty(path)) {
+                // If it exists just add the new http method
+                paths[path][httpMethod] = {
                     operationId,
                     requestBody: {
                         content: {
@@ -115,15 +117,46 @@ export function processPaths(sourceFile: SourceFile, typeRegistry: {
                         },
                     },
                     summary: summary,
-                },
-            };
+                }; 
+            } else {
+                // If paths[path] does not exist, create a new entry for it
+                paths[path] = {
+                    [httpMethod]: {
+                        operationId,
+                        requestBody: {
+                            content: {
+                                "application/json": {
+                                    schema: createSchemaRef(paramType)
+                                }
+                            }
+                        },
+                        responses: {
+                            '200': {
+                                description: 'OK',
+                                content: {
+                                    'application/json': {
+                                        schema: createSchemaRef(returnType),
+                                    },
+                                },
+                            },
+                        },
+                        summary: summary,
+                    },
+                };
+            }
         } else {
-
-            // Create a path item for this method
-            paths[path] = {
-                [httpMethod]: {
+            // Check if paths[path] already exists
+            if (paths.hasOwnProperty(path)) {
+                // If it exists just add the new http method
+                paths[path][httpMethod] = {
                     operationId,
-                    parameters: pathParams,
+                    requestBody: {
+                        content: {
+                            "application/json": {
+                                schema: createSchemaRef(paramType)
+                            }
+                        }
+                    },
                     responses: {
                         '200': {
                             description: 'OK',
@@ -134,9 +167,34 @@ export function processPaths(sourceFile: SourceFile, typeRegistry: {
                             },
                         },
                     },
-                    summary: summary,
-                },
-            };
+                    summary: summary
+                };
+            } else {
+                // If paths[path] does not exist, create a new entry for it
+                paths[path] = {
+                    [httpMethod]: {
+                        operationId,
+                        requestBody: {
+                            content: {
+                                "application/json": {
+                                    schema: createSchemaRef(paramType)
+                                }
+                            }
+                        },
+                        responses: {
+                            '200': {
+                                description: 'OK',
+                                content: {
+                                    'application/json': {
+                                        schema: createSchemaRef(returnType),
+                                    },
+                                },
+                            },
+                        },
+                        summary: summary,
+                    },
+                };
+            }
         }
     }
 
